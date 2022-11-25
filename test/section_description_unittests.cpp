@@ -84,10 +84,12 @@ TEST_CASE("ParseFull", "[SectionDescription]")
   REQUIRE(desc.GetPeekStream() == true);
 }
 
-TEST_CASE("ParseLengthIsNotANumber", "[SectionDescription]") {
-    REQUIRE_THROWS(SectionDescription::FromString("test:asdf"));
+TEST_CASE("ParseLengthIsNotANumber", "[SectionDescription]")
+{
+  REQUIRE_THROWS(SectionDescription::FromString("test:asdf"));
 }
 
-TEST_CASE("ParseMaskIsNotANumber", "[SectionDescription]") {
-    REQUIRE_THROWS(SectionDescription::FromString("test:1234^asdf"));
+TEST_CASE("ParseMaskIsNotANumber", "[SectionDescription]")
+{
+  REQUIRE_THROWS(SectionDescription::FromString("test:1234^asdf"));
 }

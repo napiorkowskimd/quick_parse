@@ -9,9 +9,9 @@ class SectionDescription
 {
   std::string name_;
   std::string output_tag_;
-  std::uint64_t mask_{0};
-  bool peek_stream_{false};
-  int length_{0};
+  std::uint64_t mask_{ 0 };
+  bool peek_stream_{ false };
+  int length_{ 0 };
 
 public:
   static SectionDescription FromString(const std::string_view &data);

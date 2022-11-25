@@ -11,13 +11,9 @@ void fclose_deleter(gsl::owner<std::FILE *> handle)
 
 void noop_deleter(gsl::owner<std::FILE *> /*handle*/) {}
 
-FilePtr MakeFilePtr(gsl::owner<std::FILE*> handle) {
-  return FilePtr{handle, &fclose_deleter};
-}
+FilePtr MakeFilePtr(gsl::owner<std::FILE *> handle) { return FilePtr{ handle, &fclose_deleter }; }
 
-FilePtr MakeFilePtrFromStdin() {
-  return FilePtr{stdin, &noop_deleter};
-}
+FilePtr MakeFilePtrFromStdin() { return FilePtr{ stdin, &noop_deleter }; }
 
 
 bool FileReader::HasEnoughInBuffer(int length) const { return (buf_end_ - buf_start_) >= length; }

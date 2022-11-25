@@ -1,7 +1,7 @@
 #include "xxd_print.hpp"
 
-#include <string>
 #include <span>
+#include <string>
 
 #include <fmt/format.h>
 
