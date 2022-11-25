@@ -1,12 +1,13 @@
 find_package(fmt CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(CLI11 CONFIG REQUIRED)
+find_package(Microsoft.GSL CONFIG REQUIRED)
 
 # Generic test that uses conan libs
-add_executable(intro main.cpp)
+add_executable(quick_parse main.cpp file_reader.cpp section_description.cpp xxd_print.cpp)
 target_link_libraries(
-  intro
+  quick_parse
   PUBLIC project_options project_warnings
-  PRIVATE CLI11::CLI11 fmt::fmt spdlog::spdlog)
+  PRIVATE CLI11::CLI11 fmt::fmt spdlog::spdlog Microsoft.GSL::GSL)
 
-target_include_directories(intro PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include")
+target_include_directories(quick_parse PRIVATE "${CMAKE_BINARY_DIR}/configured_files/include")
