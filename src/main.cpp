@@ -96,8 +96,8 @@ int PrintAndSaveSections(FileReader &reader,
   std::map<std::string, FilePtr> output_fds;
 
   for (const auto &output : outputs) {
-    output_fds.emplace(std::make_pair(
-      output.first, MakeFilePtr(OpenFile(std::filesystem::path{ output.second }, "w"))));
+    output_fds.emplace(output.first,
+      MakeFilePtr(OpenFile(std::filesystem::path{ output.second }, OpenFileMode::WRITE)));
   }
 
   int offset = 0;
@@ -196,7 +196,7 @@ Arguments HandleCli(int argc, const char **argv)
       name_path.begin() + static_cast<std::string::iterator::difference_type>(colon_pos) + 1,
       name_path.end());
 
-    args.output_files.emplace(std::make_pair(name, path));
+    args.output_files.emplace(name, path);
   }
 
   return args;
@@ -217,7 +217,8 @@ int main(int argc, const char **argv)
   if (args.input_file == "-") {
     reader = FileReader{ MakeFilePtrFromStdin() };
   } else {
-    reader = FileReader{ MakeFilePtr(OpenFile(std::filesystem::path{ args.input_file }, "r")) };
+    reader = FileReader{ MakeFilePtr(
+      OpenFile(std::filesystem::path{ args.input_file }, OpenFileMode::READ)) };
   }
 
   if (!reader.IsValid()) {

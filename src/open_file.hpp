@@ -5,6 +5,11 @@
 #include <gsl/gsl>
 #include <string>
 
-gsl::owner<std::FILE *> OpenFile(const std::filesystem::path &path, const std::string &mode);
+enum class OpenFileMode {
+  READ,
+  WRITE
+};
+
+gsl::owner<std::FILE *> OpenFile(const std::filesystem::path &path, const OpenFileMode &mode);
 
 #endif// OPEN_FILE_HPP_
