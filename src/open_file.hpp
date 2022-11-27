@@ -7,4 +7,4 @@
 
 gsl::owner<std::FILE *> OpenFile(const std::filesystem::path &path, const std::string &mode);
 
-#endif // OPEN_FILE_HPP_
+#endif// OPEN_FILE_HPP_

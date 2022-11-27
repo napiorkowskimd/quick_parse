@@ -11,4 +11,3 @@ gsl::owner<std::FILE *> OpenFile(const std::filesystem::path &path, const std::s
   return std::fopen(path.c_str(), mode.c_str());
 #endif
 }
-
