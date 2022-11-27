@@ -1,6 +1,6 @@
+#include <algorithm>
 #include <cstdlib>
 #include <functional>
-#include <iostream>
 #include <limits>
 #include <map>
 #include <optional>
@@ -14,6 +14,7 @@
 #include <internal_use_only/config.hpp>
 
 #include "file_reader.hpp"
+#include "open_file.hpp"
 #include "section_description.hpp"
 #include "xxd_print.hpp"
 
@@ -95,8 +96,8 @@ int PrintAndSaveSections(FileReader &reader,
   std::map<std::string, FilePtr> output_fds;
 
   for (const auto &output : outputs) {
-    output_fds.emplace(
-      std::make_pair(output.first, MakeFilePtr(fopen(output.second.c_str(), "w"))));
+    output_fds.emplace(std::make_pair(
+      output.first, MakeFilePtr(OpenFile(std::filesystem::path{ output.second }, "w"))));
   }
 
   int offset = 0;
@@ -216,7 +217,7 @@ int main(int argc, const char **argv)
   if (args.input_file == "-") {
     reader = FileReader{ MakeFilePtrFromStdin() };
   } else {
-    reader = FileReader{ MakeFilePtr(std::fopen(args.input_file.c_str(), "r")) };
+    reader = FileReader{ MakeFilePtr(OpenFile(std::filesystem::path{ args.input_file }, "r")) };
   }
 
   if (!reader.IsValid()) {

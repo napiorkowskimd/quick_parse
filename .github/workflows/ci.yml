@@ -36,7 +36,7 @@ jobs:
           - windows-2019
         compiler:
           # you can specify the version after `-` like "llvm-13.0.0".
-          - llvm-13.0.0
+          - llvm-15.0.2
           - gcc-11
         generator:
           - "Ninja Multi-Config"
@@ -119,7 +119,7 @@ jobs:
           generator: ${{ matrix.generator }}
 
       - name: Setup Cpp
-        uses: aminya/setup-cpp@v1
+        uses: aminya/setup-cpp@v0.23.0
         with:
           compiler: ${{ matrix.compiler }}
           vcvarsall: ${{ contains(matrix.os, 'windows' )}}
@@ -144,10 +144,28 @@ jobs:
         # make sure coverage is only enabled for Debug builds, since it sets -O0 to make sure coverage
         # has meaningful results
       - name: Configure CMake
+        # Clear out LLVM environment to avoid issues with GCC.
+        env:
+          LLVM_PATH: ""
+          LD_LIBRARY_PATH: ""
+          DYLD_LIBRARY_PATH: ""
+          LDFLAGS: ""
+          CPPFLAGS: ""
+          LIBRARY_PATH: ""
+          CPATH: ""
         run: |
           cmake -S . -B ./build -G "${{matrix.generator}}" -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -DENABLE_DEVELOPER_MODE:BOOL=${{matrix.developer_mode}} -DOPT_ENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DGIT_SHA:STRING=${{ github.sha }}
 
       - name: Build
+        # Clear out LLVM environment to avoid issues with GCC.
+        env:
+          LLVM_PATH: ""
+          LD_LIBRARY_PATH: ""
+          DYLD_LIBRARY_PATH: ""
+          LDFLAGS: ""
+          CPPFLAGS: ""
+          LIBRARY_PATH: ""
+          CPATH: ""
         # Execute the build.  You can specify a specific target with "--target <NAME>"
         run: |
           cmake --build ./build --config ${{matrix.build_type}}

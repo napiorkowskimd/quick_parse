@@ -4,7 +4,13 @@ find_package(CLI11 CONFIG REQUIRED)
 find_package(Microsoft.GSL CONFIG REQUIRED)
 
 # Generic test that uses conan libs
-add_executable(quick_parse main.cpp file_reader.cpp section_description.cpp xxd_print.cpp)
+add_executable(quick_parse
+  file_reader.cpp
+  main.cpp
+  open_file.cpp
+  section_description.cpp
+  xxd_print.cpp)
+
 target_link_libraries(
   quick_parse
   PUBLIC project_options project_warnings

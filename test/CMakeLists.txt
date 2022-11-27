@@ -40,10 +40,12 @@ set_tests_properties(cli.version_matches PROPERTIES PASS_REGULAR_EXPRESSION "${P
 configure_file(file_reader_test_data.txt "${CMAKE_CURRENT_BINARY_DIR}" COPYONLY)
 
 add_executable(tests 
+  "${CMAKE_SOURCE_DIR}/src/open_file.cpp"
   file_reader_unittests.cpp
   "${CMAKE_SOURCE_DIR}/src/file_reader.cpp"
   section_description_unittests.cpp
-  "${CMAKE_SOURCE_DIR}/src/section_description.cpp")
+  "${CMAKE_SOURCE_DIR}/src/section_description.cpp"
+)
 
 target_link_libraries(tests PRIVATE project_warnings project_options catch_main)
 target_include_directories(tests PRIVATE "${CMAKE_SOURCE_DIR}/src")

@@ -1,7 +1,12 @@
 #include "file_reader.hpp"
 
+
+#include <memory>
+
 #include <gsl/gsl>
 #include <spdlog/spdlog.h>
+
+#include "workarounds.hpp"
 
 void fclose_deleter(gsl::owner<std::FILE *> handle)
 {
@@ -25,13 +30,14 @@ void FileReader::ReadIntoBuffer(int length)
   if (to_read >= buffer_.size() - static_cast<size_t>(buf_end_)) {
     buffer_.resize(static_cast<std::size_t>(std::ssize(buffer_) + length));
   }
-  const auto new_data_size = std::fread(&*(buffer_.begin() + buf_end_), 1, to_read, file_.get());
+  const auto new_data_size =
+    std::fread(std::to_address(buffer_.begin() + buf_end_), 1, to_read, file_.get());
   buf_end_ += static_cast<vec_size_t>(new_data_size);
 }
 
 std::span<uint8_t> FileReader::Peek(int length)
 {
-  assert(length > 0);
+  workaroud_assert(length > 0);
   if (!HasEnoughInBuffer(length)) { ReadIntoBuffer(length); }
   const auto signed_length = static_cast<vec_size_t>(length);
   if (signed_length > (buf_end_ - buf_start_)) {
