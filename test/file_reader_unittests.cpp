@@ -14,7 +14,7 @@ static constexpr const auto kDSectionEnd = 136;
 
 TEST_CASE("SanityTestDataCanBeOpened", "[FileReader]")
 {
-  FileReader reader{ MakeFilePtr(OpenFile(test_dat_file, OpenFileMode::READ)) };
+  const FileReader reader{ MakeFilePtr(OpenFile(test_dat_file, OpenFileMode::READ)) };
   REQUIRE(reader.IsValid());
 }
 

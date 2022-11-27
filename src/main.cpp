@@ -134,6 +134,7 @@ int PrintAndSaveSections(FileReader &reader,
   return offset;
 }
 
+// NOLINTNEXTLINE(bugprone-exception-escape)
 struct Arguments
 {
   std::optional<int> exit_code;
@@ -190,12 +191,8 @@ Arguments HandleCli(int argc, const char **argv)
       args.exit_code = EXIT_FAILURE;
       break;
     }
-    const auto name = std::string_view(name_path.begin(),
-      name_path.begin() + static_cast<std::string::iterator::difference_type>(colon_pos));
-    const auto path = std::string_view(
-      name_path.begin() + static_cast<std::string::iterator::difference_type>(colon_pos) + 1,
-      name_path.end());
-
+    const auto name = name_path.substr(0, colon_pos);
+    const auto path = name_path.substr(colon_pos + 1);
     args.output_files.emplace(name, path);
   }
 
