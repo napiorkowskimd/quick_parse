@@ -37,7 +37,7 @@ std::string ModeToString(OpenFileMode mode)
 gsl::owner<std::FILE *> OpenFile(const std::filesystem::path &path, const OpenFileMode &mode)
 {
 #ifdef _MSC_VER
-  _wfopen(path.c_str(), ModeToString(mode).c_str());
+  return _wfopen(path.c_str(), ModeToString(mode).c_str());
 #else
   return std::fopen(path.c_str(), ModeToString(mode).c_str());
 #endif
