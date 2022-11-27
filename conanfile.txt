@@ -1,6 +1,7 @@
 # Docs at https://docs.conan.io/en/latest/reference/conanfile_txt.html
 
 [requires]
+fmt/9.1.0
 catch2/2.13.9
 cli11/2.2.0
 spdlog/1.10.0

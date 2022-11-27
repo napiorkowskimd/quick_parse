@@ -1,9 +1,10 @@
 #include <cstdio>
-
-#include <catch2/catch.hpp>
 #include <memory>
 
+#include <catch2/catch.hpp>
+
 #include "file_reader.hpp"
+#include "open_file.hpp"
 
 static constexpr const char *test_dat_file = "file_reader_test_data.txt";
 static constexpr const auto kASectionEnd = 4;
@@ -13,13 +14,13 @@ static constexpr const auto kDSectionEnd = 136;
 
 TEST_CASE("SanityTestDataCanBeOpened", "[FileReader]")
 {
-  FileReader reader{ MakeFilePtr(std::fopen(test_dat_file, "r")) };
+  const FileReader reader{ MakeFilePtr(OpenFile(test_dat_file, OpenFileMode::READ)) };
   REQUIRE(reader.IsValid());
 }
 
 TEST_CASE("Peeking doesn't move read head", "[FileReader]")
 {
-  FileReader reader{ MakeFilePtr(std::fopen(test_dat_file, "r")) };
+  FileReader reader{ MakeFilePtr(OpenFile(test_dat_file, OpenFileMode::READ)) };
   const auto four_A = reader.Peek(4);
   REQUIRE(four_A.size() == 4);
   for (const auto &elem : four_A) { REQUIRE(elem == 'A'); }
@@ -32,7 +33,7 @@ TEST_CASE("Peeking doesn't move read head", "[FileReader]")
 // NOLINTNEXTLINE(readability-function-cognitive-complexity)
 TEST_CASE("Resize buffer_ after Peek", "[FileReader]")
 {
-  FileReader reader{ MakeFilePtr(std::fopen(test_dat_file, "r")) };
+  FileReader reader{ MakeFilePtr(OpenFile(test_dat_file, OpenFileMode::READ)) };
   const auto suffix = reader.Peek(kBSectionEnd);
   REQUIRE(suffix.size() == kBSectionEnd);
   for (unsigned i = 0; i < kASectionEnd; ++i) { REQUIRE(suffix[i] == 'A'); }
@@ -50,7 +51,7 @@ TEST_CASE("Resize buffer_ after Peek", "[FileReader]")
 
 TEST_CASE("Read moves the head", "[FileReader]")
 {
-  FileReader reader{ MakeFilePtr(std::fopen(test_dat_file, "r")) };
+  FileReader reader{ MakeFilePtr(OpenFile(test_dat_file, OpenFileMode::READ)) };
   const auto four_A = reader.Read(4);
   REQUIRE(four_A.size() == 4);
   const auto four_B = reader.Read(4);
@@ -60,7 +61,7 @@ TEST_CASE("Read moves the head", "[FileReader]")
 
 TEST_CASE("Read larger chunk of data", "[FileReader]")
 {
-  FileReader reader{ MakeFilePtr(std::fopen(test_dat_file, "r")) };
+  FileReader reader{ MakeFilePtr(OpenFile(test_dat_file, OpenFileMode::READ)) };
   const auto suffix_data = reader.Read(8);
   REQUIRE(suffix_data.size() == 8);
 
@@ -71,7 +72,7 @@ TEST_CASE("Read larger chunk of data", "[FileReader]")
 
 TEST_CASE("Read past the end of file", "[FileReader]")
 {
-  FileReader reader{ MakeFilePtr(std::fopen(test_dat_file, "r")) };
+  FileReader reader{ MakeFilePtr(OpenFile(test_dat_file, OpenFileMode::READ)) };
   const auto suffix_data = reader.Read(136);
   REQUIRE(suffix_data.size() == 136);
 
@@ -82,7 +83,7 @@ TEST_CASE("Read past the end of file", "[FileReader]")
 
 TEST_CASE("Peek whole file then read some", "[FileReader]")
 {
-  FileReader reader{ MakeFilePtr(std::fopen(test_dat_file, "r")) };
+  FileReader reader{ MakeFilePtr(OpenFile(test_dat_file, OpenFileMode::READ)) };
   const auto suffix_data = reader.Peek(140);
   REQUIRE(suffix_data.size() == 140);
 
@@ -96,7 +97,7 @@ TEST_CASE("Peek whole file then read some", "[FileReader]")
 // NOLINTNEXTLINE(readability-function-cognitive-complexity)
 TEST_CASE("Edge Peek then Read one Byte more", "[FileReader]")
 {
-  FileReader reader{ MakeFilePtr(std::fopen(test_dat_file, "r")) };
+  FileReader reader{ MakeFilePtr(OpenFile(test_dat_file, OpenFileMode::READ)) };
   const auto suffix = reader.Peek(kASectionEnd);
   REQUIRE(suffix.size() == kASectionEnd);
   for (unsigned i = 0; i < kASectionEnd; ++i) { REQUIRE(suffix[i] == 'A'); }

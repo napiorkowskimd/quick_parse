@@ -1,6 +1,6 @@
+#include <algorithm>
 #include <cstdlib>
 #include <functional>
-#include <iostream>
 #include <limits>
 #include <map>
 #include <optional>
@@ -14,6 +14,7 @@
 #include <internal_use_only/config.hpp>
 
 #include "file_reader.hpp"
+#include "open_file.hpp"
 #include "section_description.hpp"
 #include "xxd_print.hpp"
 
@@ -95,8 +96,8 @@ int PrintAndSaveSections(FileReader &reader,
   std::map<std::string, FilePtr> output_fds;
 
   for (const auto &output : outputs) {
-    output_fds.emplace(
-      std::make_pair(output.first, MakeFilePtr(fopen(output.second.c_str(), "w"))));
+    output_fds.emplace(output.first,
+      MakeFilePtr(OpenFile(std::filesystem::path{ output.second }, OpenFileMode::WRITE)));
   }
 
   int offset = 0;
@@ -133,6 +134,7 @@ int PrintAndSaveSections(FileReader &reader,
   return offset;
 }
 
+// NOLINTNEXTLINE(bugprone-exception-escape)
 struct Arguments
 {
   std::optional<int> exit_code;
@@ -189,13 +191,9 @@ Arguments HandleCli(int argc, const char **argv)
       args.exit_code = EXIT_FAILURE;
       break;
     }
-    const auto name = std::string_view(name_path.begin(),
-      name_path.begin() + static_cast<std::string::iterator::difference_type>(colon_pos));
-    const auto path = std::string_view(
-      name_path.begin() + static_cast<std::string::iterator::difference_type>(colon_pos) + 1,
-      name_path.end());
-
-    args.output_files.emplace(std::make_pair(name, path));
+    const auto name = name_path.substr(0, colon_pos);
+    const auto path = name_path.substr(colon_pos + 1);
+    args.output_files.emplace(name, path);
   }
 
   return args;
@@ -216,7 +214,8 @@ int main(int argc, const char **argv)
   if (args.input_file == "-") {
     reader = FileReader{ MakeFilePtrFromStdin() };
   } else {
-    reader = FileReader{ MakeFilePtr(std::fopen(args.input_file.c_str(), "r")) };
+    reader = FileReader{ MakeFilePtr(
+      OpenFile(std::filesystem::path{ args.input_file }, OpenFileMode::READ)) };
   }
 
   if (!reader.IsValid()) {
